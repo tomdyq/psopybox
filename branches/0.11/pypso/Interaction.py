@@ -66,7 +66,7 @@ def getSwarmPosition(topology, bestPosition=False):
             x = particle.ownBestPosition[:2]
         else:
             x = particle.position[:2]
-        position_list.append(x)
+        position_list.append(tuple(x))
     return position_list
 
 #Plot the swarm fitness distribution
@@ -99,9 +99,14 @@ def plotHistSwarmFitness(topology, bestFitness=False):
 #@param bestPosition: if it's True, the bestPosition will be used, otherwise, the current one.
 def plotSwarmPosition(topology,bestPosition=False):
     position_list = getSwarmPosition(topology,bestPosition)
-    pylab.plot(position_list,'o')
-    pylab.title("Plot of the swarm position distribution")
-    pylab.xlabel('Particle')
-    pylab.ylabel('Position')
+    x_list = []
+    y_list = []
+    for x,y in position_list:
+        x_list.append(x)
+        y_list.append(y)
+    pylab.plot(x_list,y_list,'o')
+    pylab.title("Plot of the swarm  particles position distribution")
+    pylab.xlabel('X')
+    pylab.ylabel('Y')
     pylab.grid(True)
     pylab.show()
