@@ -228,15 +228,15 @@ class PSO(object):
                                 if msvcrt.kbhit():
                                     if ord(msvcrt.getch()) == Consts.CDefESCKey:
                                         print "Loading modules for Interactive mode...",
-                                        #import pypso.Interaction
+                                        import pypso.Interaction
                                         print "done!\n"
                                         interact_banner = "## PyPSO v.%s - Interactive Mode ##\nPress CTRL-Z to quit interactive mode." % (pypso.__version__,)
                                         session_locals = {  "pso_engine"  : self,
                                                             "topology" : self.getTopology(),
                                                             "swarm_statistics": self.getTopology().swarmStats,
                                                             "topology_statistics": self.getTopology().topologyStats,
-                                                            "pypso"   : pypso }
-                                                            #"it"         : pypso.Interaction}
+                                                            "pypso"   : pypso ,
+                                                            "it"         : pypso.Interaction}
                                         print
                                         code.interact(interact_banner, local=session_locals)
                                 
