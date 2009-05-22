@@ -17,6 +17,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 0.10 2009-04-16 Initial version.
+0.20 2009-05-21 Added support for Local Communicator (ownLocalBestPosition and ownLocalBestFitness)
 '''
 
 '''
@@ -45,6 +46,10 @@ class Particle(object):
         self.ownBestFitness = 0.0
         #Best position founded by particle.
         self.ownBestPosition = []
+        #Best local position founded by particle (local communicator).
+        self.ownLocalBestPosition = []
+        #Best local fitness founded by particle (local communicator).
+        self.ownLocalBestFitness = 0.0
         #Current fitness
         self.fitness = 0.0
     
@@ -57,12 +62,14 @@ class Particle(object):
             rand = self.randomPosition(Pso.PSO().initialPositionBounds[i][0],Pso.PSO().initialPositionBounds[i][1])
             self.position.append(rand)
             self.ownBestPosition.append(rand)
+            self.ownLocalBestPosition.append(rand)
             #Velocities from 0.0 up to velocity bound
             rand = abs(random.uniform(0.0,Pso.PSO().velocityBounds[i]))
             self.velocity.append(rand)
         #Calculate the fitness
         self.evaluateFitness()
         self.ownBestFitness = self.fitness
+        self.ownLocalBestFitness = self.fitness
     
     
     #Evaluates the particle fitness
@@ -103,6 +110,17 @@ class Particle(object):
     def getownBestPosition(self):
         return self.ownBestPosition
     
+    
+    #Get the own Local best Fitness
+    #@return the own local best Fitness
+    def getownLocalBestFitness(self):
+        return self.ownLocalBestFitness
+  
+    #Get the best local position founded by particle.
+    def getownLocalBestPosition(self):
+        return self.ownLocalBestPosition
+    
+    
     #Set the particle communicator
     #@param communicator: The particle communicator
     def setCommunicator(self,communicator):
@@ -117,12 +135,27 @@ class Particle(object):
     #@param ownBestPosition : The best position
     def setownBestPosition(self,ownBestPosition):
         self.ownBestPosition = ownBestPosition[:]     
+        
+    
+    #Set the own local best fitness
+    #@param ownLocalBestFitness : The local best fitness
+    def setownLocalBestFitness(self,ownLocalBestFitness):
+        self.ownLocalBestFitness = ownLocalBestFitness
+        
+    #Set the own local best position
+    #@param ownLocalBestPosition : The local best position
+    def setownLocalBestPosition(self,ownLocalBestPosition):
+        self.ownLocalBestPosition = ownLocalBestPosition[:]     
+    
     
     #Clear best position and fitness of the particle
     def resetStats(self):
         self.ownBestFitness = 0.0
+        self.ownLocalBestFitness = 0.0
         self.fitness = 0.0
         self.ownBestPosition = []
+        self.ownLocalBestPosition = []
+        
     
     #String represenation of the Particle
     def __repr__(self):
@@ -132,5 +165,4 @@ class Particle(object):
         ret+= "\tBestPosition:\t\t %s\n\n" % (self.ownBestPosition,)
         return ret
         
-        
-
+       
