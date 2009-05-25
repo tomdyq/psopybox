@@ -40,7 +40,7 @@ class TopologyStatistics(Statistics.Statistics):
                                 "fitness"       : 0.0,
                                 "bestPosition"  : [],
                                 "bestPosDim:"   : 0.0,
-                                "Position"      : []
+                                "position"      : []
                              }
    
         self.descriptions = {   "bestFitness"  : "Best Fitness of the best Particle",
@@ -55,8 +55,5 @@ class TopologyStatistics(Statistics.Statistics):
     def __repr__(self):
         strBuff = "- Best Particle Topology Statistics\n"
         for k,v in self.internalDict.items():
-            if type(v) is list:
-                strBuff += "\t%-45s = %.2f\n" % (self.descriptions.get(k,k), v)
-            else:
                 strBuff += "\t%-45s = %s\n" % (self.descriptions.get(k,k), v)
         return strBuff

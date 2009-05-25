@@ -130,10 +130,10 @@ class Topology(object):
     
     #Returns the string representation of the topology
     def __repr__(self):
-        ret = "- Topology\n"
+        ret = "-Topology:\t %s\n" % (self.__class__.__name__ ,)
         ret += "\tSwarm Size:\t %d\n" %(self.swarmSize,)
         ret += "\tDimensions:\t %d\n" %(self.dimensions,)
-        ret += "\tCommunicator:\t\t %s\n" %(self.communicator)
+        ret += "\tCommunicator:\t %s\n" %(self.communicator)
         ret += "\n"
         return ret
     
@@ -168,6 +168,7 @@ class Topology(object):
         self.topologyStats["bestPosition"] = self.bestParticle.ownBestPosition[:]
         self.topologyStats["bestPosDim"] = self.bestParticle.ownBestPosition[0]
         self.topologyStats["position"] = self.bestParticle.position[:]
+        self.topologyStats["fitness"] = self.bestParticle.fitness
         
         
         self.statted = True

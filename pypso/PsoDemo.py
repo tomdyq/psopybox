@@ -17,6 +17,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 0.10 2009-04-16 Initial version.
+0.20 2009-05-21 Added support for demonstration of Local Topology.
 '''
 
 #Pso Demo
@@ -24,6 +25,7 @@ limitations under the License.
 from pypso import Pso
 from pypso import Consts
 from pypso import GlobalTopology
+from pypso import LocalTopology
 
 #This is the Sphere Function
 def sphere(position):
@@ -43,7 +45,8 @@ timeSteps = 10000
 pso = Pso.PSO()
 pso.setPsoType(Consts.psoType["CONSTRICTED"])
 pso.setTimeSteps(timeSteps)
-pso.setTopology(GlobalTopology.GlobalTopology(swarm_size,dimensions))
+#pso.pso.setTopology(GlobalTopology.GlobalTopology(swarm_size,dimensions))
+pso.setTopology(LocalTopology.LocalTopology(swarm_size,dimensions))
 
 # The evaluator function (objective function)
 pso.setFunction(sphere)
