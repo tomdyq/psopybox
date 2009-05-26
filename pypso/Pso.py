@@ -17,6 +17,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 0.10 2009-04-16 Initial version.
+0.20 2009-05-21 Added support for Local Topology implementation (Added StoreBestParticle method).
+0.21 2009-05-24 Added support for Linux interaction.
+0.22 2009-05-25 Added support for report files generation (Uses ReportAdapters).
 '''
 
 """     This module contains the PSO Engine, the PSO class is responsible
@@ -32,9 +35,16 @@ import Util
 from sys import exit as sys_exit
 from sys import platform as sys_platform
 
+import code
+import pypso
+
 
 if sys_platform[:3] == "win":
    import msvcrt
+elif sys_platform[:5] == "linux":
+    import atexit
+    atexit.register(Util.set_normal_term)
+    Util.set_curses_term()
 
 #The PSO Core
 class PSO(object):
@@ -77,6 +87,8 @@ class PSO(object):
             self.velocityBounds = []
             #Optimization type
             self.minimax = Consts.minimaxType["minimize"]
+            #Report file adapter 
+            self.reportAdapter = None
             #print "A PSO Engine was created, timeSteps=% d" % ( self.timeSteps, )
         
         #Set the function fitness
@@ -87,6 +99,10 @@ class PSO(object):
         def getFunction(self):
             return self.function
         
+        #@return the function name
+        def getFunctionName(self):
+            return self.function.__name__
+        
         #Sets the optimization type (Minimize or Maximize)
         #@param minima: The optimization type
         def setMinimax(self,minimax):
@@ -94,6 +110,13 @@ class PSO(object):
                 Util.raiseException("Optimization type must be Maximize or Minimize !",TypeError)
             self.minimax = minimax
         
+        #@return the minimax type
+        def getMinimaxType(self):
+            for key,value in Consts.minimaxType.items():
+                if value == self.minimax:
+                    return key
+            return ""
+          
         #Sets the psoType, use Consts.psoType (Basic, Constricted , Inertia)
         #@param psoType: The PSO type, from Consts.psoType
         def setPsoType(self,psoType):
@@ -103,7 +126,10 @@ class PSO(object):
         
         #@return  the PsoType
         def getPsoType(self):
-            return self.psoType
+            for key,value in Consts.psoType.items():
+                if value == self.psoType:
+                    return key
+            return ""
         
         #Sets the Topology and its parameters
         #@param topology: The current topology
@@ -113,6 +139,9 @@ class PSO(object):
         #@return the topology
         def getTopology(self):
             return self.topology
+        #@return the name of the topology
+        def getTopologyType(self):
+            return self.topology.__class__.__name__ 
         
         #Initialize position and velocity bounds
         #@param dimensions the number of dimensions used
@@ -172,15 +201,37 @@ class PSO(object):
         #Updates the inertia factor (Only used by INERTIA Pso Type)
         def updateInertiaFactor(self):
             self.inertiaFactor = self.inertiaFactor = self.inertiaFactorMinus
+            
+        #Sets the Report Adapater of the PSO Engine (Warning: The use of the Report Adapter can redue the speed performance of the PSO.)
+        #@param repadapter : one of the ReportAdapters classes instance
+        def setReportAdapter(self,repadapter):
+            self.reportAdapter = repadapter
+        
+        #Gets the Report Adapter of the PSO Engine
+        #@return  a instance from one of the ReportAdapters classes
+        def getReportAdapter(self):
+            return self.reportAdapter
+        
+        #Gets the Topology/Swarm statistics class instance of the current iteration
+        #@return tuple (topology,swarm) statitics class instances.
+        def getStatistics(self):
+            return self.topology.getStatistics()
+        
+        #Dumps the current statistics to the report adapter
+        def dumpStatsReport(self):
+            self.topology.statistics()
+            self.reportAdapter.insert(self.getStatistics(), self.topology, self.currentStep)
            
         #The string representation of the PSO Engine"
         def __repr__(self):
-            ret =   "- PSO-%s-%s Execution\n" % (self.topology,self.psoType)
+            ret =   "- PSO-%s-%s Execution\n" % (self.getTopologyType(),self.getPsoType())
             ret +=  "\tSwarm Size:\t %d\n" % (self.topology.swarmSize,)
             ret +=  "\tDimensions:\t %d\n" % (self.topology.dimensions,)
-            ret +=  "\tTime Steps:\t\t %d\n" % (self.timeSteps,)      
+            ret +=  "\tTime Steps:\t %d\n" % (self.timeSteps,)      
             ret +=  "\tCurrent Step:\t %d\n" % (self.currentStep,)
-            ret +=  "\tFunction:\t  %s\n" % (self.function,)
+            ret +=  "\tMinimax Type:\t %s\n" % (self.getMinimaxType(),)
+            ret +=  "\tFunction:\t %s\n" % (self.getFunctionName(),)
+            ret +=  "\tReport Adapter:\t %s\n" % (self.reportAdapter,)
             ret +="\n"
             return ret
         
@@ -192,6 +243,8 @@ class PSO(object):
             self.checkParametersSet()
             #Start time
             self.time_init = time()
+            #Creates a new report if reportAdapter is not None.
+            if self.reportAdapter: self.reportAdapter.open()
             #Initialize the PSO Engine
             self.initialize()
             
@@ -202,32 +255,64 @@ class PSO(object):
                     if freq_stats != 0:
                         if (self.currentStep % freq_stats == 0) or (self.currentStep == 1):
                             self.printStats()
+                        
+                        if self.reportAdapter:
+                            if self.currentStep % self.reportAdapter.statsGenFreq == 0:
+                                self.dumpStatsReport()
+                        
                         if self.interactiveMode:
                             if sys_platform[:3] == "win":
                                 if msvcrt.kbhit():
                                     if ord(msvcrt.getch()) == Consts.CDefESCKey:
+                                        print "Loading modules for Interactive mode...",
                                         import pypso.Interaction
+                                        print "done!\n"
                                         interact_banner = "## PyPSO v.%s - Interactive Mode ##\nPress CTRL-Z to quit interactive mode." % (pypso.__version__,)
                                         session_locals = {  "pso_engine"  : self,
-                                                            "swarm" : self.getSwarm(),
-                                                            "pypso"   : pypso,
+                                                            "topology" : self.getTopology(),
+                                                            "swarm_statistics": self.getTopology().swarmStats,
+                                                            "topology_statistics": self.getTopology().topologyStats,
+                                                            "pypso"   : pypso ,
                                                             "it"         : pypso.Interaction}
                                         print
                                         code.interact(interact_banner, local=session_locals)
-                                
+                            elif sys_platform[:5] == "linux":
+                                if Util.kbhit():
+                                    if ord(Util.getch()) == Consts.CDefESCKey:
+                                        print "Loading modules for Interactive mode...",
+                                        import pypso.Interaction
+                                        print "done!\n"
+                                        interact_banner = "## PyPSO v.%s - Interactive Mode ##\nPress CTRL-D to quit interactive mode." % (pypso.__version__,)
+                                        session_locals = {  "pso_engine"  : self,
+                                                            "topology" : self.getTopology(),
+                                                            "swarm_statistics": self.getTopology().swarmStats,
+                                                            "topology_statistics": self.getTopology().topologyStats,
+                                                            "pypso"   : pypso ,
+                                                            "it"         : pypso.Interaction}
+                                        print
+                                        code.interact(interact_banner, local=session_locals)
+                                            
             except KeyboardInterrupt:
                 print "\n\tA break was detected, you have interrupted the evolution !\n"
      
             if freq_stats != 0:
                 self.printStats()
                 self.printTimeElapsed()
+            
+            if self.reportAdapter:
+                if not (self.currentStep % self.reportAdapter.statsGenFreq == 0):
+                    self.dumpStatsReport()
+                    self.reportAdapter.saveAndClose()
                                     
         #Constructs a solution (one step of the proccess).
         def constructSolution(self):
             self.topology.updateParticlesPosition()
             self.topology.updateParticlesInformation()
+
+            if type(self.topology) is pypso.LocalTopology.LocalTopology:
+                self.topology.storeBestParticle()
             #print 'Updating topology position and information.'
-        
+            
             if self.psoType == Consts.psoType["INERTIA"]:
                 self.updateInertiaFactor()
                 print "Updated the inertia factor"

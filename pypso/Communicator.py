@@ -23,6 +23,7 @@ limitations under the License.
     This module contains the class Particle communicator class, which is responsable to 
     realize how the information and position of the particle is updated.
 '''
+from pypso import Pso
 
 #Particle communicator interface
 class Communicator(object):
@@ -40,3 +41,10 @@ class Communicator(object):
     #@param topology: The topology of the particle
     def updateParticleInformation(self,particle,topology):
         pass
+
+    ##String represenation of the Communicator
+    def __repr__(self):
+        ret = "%s\n" % (self.__class__.__name__ ,)
+        ret += "\tPsoType:\t %s"  % (Pso.PSO().getPsoType(),)
+        return ret
+                                    

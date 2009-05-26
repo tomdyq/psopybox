@@ -17,6 +17,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 0.10 2009-04-16 Initial version.
+0.11 2009-05-25 Added constants for ReportFileCSV Adapter (Reports).
 '''
 
 """     This module contains all default settings and constants, to help the user 
@@ -70,3 +71,8 @@ minimaxType = { "minimize" : 0,
                }
 #Social and Cognitive Coefficients (C1 and C2)
 CDefCoefficients = (2.05,2.05)
+
+
+# - Report Adapters CSV File defaults
+CDefCSVFileName = "pypso.csv"
+CDefCSVFileStatsGenFreq = 1

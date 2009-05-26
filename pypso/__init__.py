@@ -35,4 +35,3 @@ if sys.version_info < Consts.CDefPythonRequire:
     raise Exception("Python 2.5+ required!")
 else:
     del sys
-
