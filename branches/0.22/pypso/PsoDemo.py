@@ -18,6 +18,7 @@ limitations under the License.
 
 0.10 2009-04-16 Initial version.
 0.20 2009-05-21 Added support for demonstration of Local Topology.
+0.21 2009-05-26 Added support for report generation(CSV File).
 '''
 
 #Pso Demo
@@ -26,6 +27,7 @@ from pypso import Pso
 from pypso import Consts
 from pypso import GlobalTopology
 from pypso import LocalTopology
+from pypso import ReportAdapters
 
 #This is the Sphere Function
 def sphere(position):
@@ -47,6 +49,10 @@ pso.setPsoType(Consts.psoType["CONSTRICTED"])
 pso.setTimeSteps(timeSteps)
 #pso.pso.setTopology(GlobalTopology.GlobalTopology(swarm_size,dimensions))
 pso.setTopology(LocalTopology.LocalTopology(swarm_size,dimensions))
+
+#Report Adapter
+csv_adapter = ReportAdapters.ReportFileCSV(identify="run1", filename="stats.csv")
+pso.setReportAdapter(csv_adapter)
 
 # The evaluator function (objective function)
 pso.setFunction(sphere)
