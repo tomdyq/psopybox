@@ -86,5 +86,6 @@ class ReportFileCSV:
     #@param iteration: The iteration of the insert
     def insert(self,stats,topology,iteration):
         line = [self.identify,iteration]
-        line.extend(stats.asTuple())
+        line.extend(stats[0].asTuple())
+        line.extend(stats[1].asTuple())
         self.csvWriter.writerow(line)
