@@ -19,6 +19,7 @@ limitations under the License.
 0.10 2009-04-16 Initial version.
 0.20 2009-05-21 Added support for demonstration of Local Topology.
 0.21 2009-05-26 Added support for report generation(CSV File).
+0.22 2009-05-28 Added support for report generation (database SQLite).
 '''
 
 #Pso Demo
@@ -51,8 +52,9 @@ pso.setTimeSteps(timeSteps)
 pso.setTopology(LocalTopology.LocalTopology(swarm_size,dimensions))
 
 #Report Adapter
-csv_adapter = ReportAdapters.ReportFileCSV(identify="run1", filename="stats.csv")
-pso.setReportAdapter(csv_adapter)
+#csv_adapter = ReportAdapters.ReportFileCSV(identify="run1", filename="stats.csv")
+sqlite_adapter = ReportAdapters.ReportDB(identify="ex6")
+pso.setReportAdapter(sqlite_adapter)
 
 # The evaluator function (objective function)
 pso.setFunction(sphere)
