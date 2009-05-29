@@ -31,8 +31,10 @@ limitations under the License.
 
 import csv
 import Consts
-
-
+import types
+import sqlite3
+import SwarmStatistics
+import TopologyStatistics
 #DBSQLite Class - Adapter to dump data in SQLite3 database format
 class ReportDB:
     #The Creator of the ReportDB Class
@@ -42,7 +44,7 @@ class ReportDB:
     #@param resetIdentify: if True, the identify with the same name will be overwrite with the new data
     #@param frequency: the generational dump frequency
     #@param commit_frequency: the commit frequency
-    def __init__(self,dbname=Consts.CDefDBName,identify=None,resetDB=False,
+    def __init__(self,dbname=Consts.CDefDBName,identify=None,resetDB=True,
                  resetIdentify=True,frequency=Consts.CDefDBStatsGenFreq, 
                  commit_freq=Consts.CDefDBStatsCommitFreq):
         
@@ -55,7 +57,7 @@ class ReportDB:
         self.resetDB = resetDB
         self.resetIdentify = resetIdentify
         self.dbName = dbname
-        self.typeDict = {types.FloatType: : "real"}
+        self.typeDict = {types.FloatType: "real"}
         self.statsGenFreq = frequency
         self.cursorPool = None
         self.commitFreq = commit_freq
@@ -71,13 +73,13 @@ class ReportDB:
         self.connection = sqlite3.connect(self.dbName)
         
         if self.resetDB:
-            self.resetStructure(SwarmStatistics.SwarmStatistics(),TopologyStatistics.TopologyStatistics())
+            self.resetStructure((SwarmStatistics.SwarmStatistics(),TopologyStatistics.TopologyStatistics()))
         
         if self.resetIdentify:
             self.resetTableIdentify()
     
     #commit changes on database and closes connection
-    def commitAndClose(self):
+    def saveAndClose(self):
         self.commit()
         self.close()
     
@@ -103,18 +105,37 @@ class ReportDB:
         
     
     #Create table using the Statistics class structure
-    def createStructure(self,*stats):
-        pass
+    def createStructure(self,stats):
+        c = self.getCursor()
+        
+        pstmt = "create table if not exists %s(identify text, iteration integer, " % (Consts.CDefReportDBSwarmTable)
+        #Swarm statistics
+        for k,v in stats[0].items():
+            pstmt += "%s %s, " % (k, self.typeDict[type(v)])
+        pstmt = pstmt[:-2] + ")"
+        c.execute(pstmt)
+        
+        pstmt = "create table if not exists %s(identify text, iteration integer, bestFitness real, bestPosDim real)" % (Consts.CDefReportDBTopTable)
+        #Topology statistics
+        c.execute(pstmt)
+        
+        #Swarm individuals statistics
+        pstmt = """create table if not exists %s(identify text, iteration integer,
+                particle integer, fitness real, bestFitness real)""" % (Consts.CDefSQLiteDBPartTable)
+        c.execute(pstmt)
+        self.commit()
     
     #Delete all records on the table with the same identify
     def resetTableIdentify(self):
         c = self.getCursor()
-        stmt = "delete from %s where identify  = ?" % (Consts.CDefReportDBTable)
-        stmt2 = "delete from %s where identify = ?" % (Consts.CDefReportDBTableSwarm)
+        stmt = "delete from %s where identify  = ?" % (Consts.CDefReportDBSwarmTable)
+        stmt2 = "delete from %s where identify = ?" % (Consts.CDefReportDBTopTable)
+        stmt3 = "delete from %s where identify = ?" % (Consts.CDefSQLiteDBPartTable)
         
         try:
             c.execute(stmt, (self.identify,))
-            c.execute(stmt, (self.identify,))
+            c.execute(stmt2, (self.identify,))
+            c.execute(stmt3, (self.identify,))
         except sqlite3.OperationalError, expt:
             if expt.message.find("no such table") >= 0:
                 print "\n ## The DB Adapter can't find the tables ! Consider enable the parameter resetDB ! ##\n"
@@ -122,10 +143,11 @@ class ReportDB:
         self.commit()
 
     #Deletes the current structure and creates a new one.
-    def resetStructure(self,*stats):
+    def resetStructure(self,stats):
         c = self.getCursor()
-        c.execute("drop table if exists %s" % (Consts.CDefReportDBTable,))
-        c.execute("drop table if exists %s" % (Consts.CDefReportDBTableSwarm,))
+        c.execute("drop table if exists %s" % (Consts.CDefReportDBSwarmTable,))
+        c.execute("drop table if exists %s" % (Consts.CDefReportDBTopTable,))
+        c.execute("drop table if exists %s" % (Consts.CDefSQLiteDBPartTable,))
         self.commit()
         self.createStructure(stats)
 
@@ -134,10 +156,28 @@ class ReportDB:
     #@param topology: The swarm to insert stats (class: Topology.Topology)
     #@param iteration: The iteration of the insert
     def insert(self,stats,topology,iteration):
-        pass
+        c = self.getCursor()
+        #Swarm statistics
+        pstmt = "insert into %s values (?, ?, " % (Consts.CDefReportDBSwarmTable)
+        for i in xrange(len(stats[1])):
+            pstmt += "?, "
+        pstmt = pstmt[:-2] + ")"
+        c.execute(pstmt, (self.identify,iteration) + stats[1].asTuple())
 
-
-
+        #Topology statistics
+        pstmt = "insert into %s values(?, ?, ?, ?) " % (Consts.CDefReportDBTopTable)
+        c.execute(pstmt, (self.identify,iteration,stats[0]["bestFitness"],stats[0]["bestPosDim"]))
+        
+        #Particles statistics
+        pstmt = "insert into %s values(?, ?, ?, ?, ?)" % (Consts.CDefSQLiteDBPartTable,)
+        tups = []
+        for i in xrange(len(topology.getSwarm())):
+            particle = topology.getSwarm()[i]
+            tups.append((self.identify,iteration,i, particle.fitness, particle.ownBestFitness))
+        c.executemany(pstmt,tups)
+        if (iteration % self.commitFreq == 0):
+            self.commit()
+            
 
 #ReportFileCSV Class  - Adapter to dump statistics in CSV format
 class ReportFileCSV:
@@ -197,4 +237,4 @@ class ReportFileCSV:
         line.extend(stats[0].asTuple())
         line.extend(stats[1].asTuple())
         self.csvWriter.writerow(line)
-   
+

@@ -300,7 +300,7 @@ class PSO(object):
                 self.printTimeElapsed()
             
             if self.reportAdapter:
-                if not (self.currentStep % self.reportAdapter.statsGenFreq == 0):
+                if (self.currentStep % self.reportAdapter.statsGenFreq == 0):
                     self.dumpStatsReport()
                     self.reportAdapter.saveAndClose()
                                     

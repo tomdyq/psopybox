@@ -18,6 +18,7 @@ limitations under the License.
 
 0.10 2009-04-16 Initial version.
 0.11 2009-05-25 Added constants for ReportFileCSV Adapter (Reports).
+0.12 2009-05-28 Added constants for ReportDB Adapter (Reports).
 '''
 
 """     This module contains all default settings and constants, to help the user 
@@ -76,3 +77,11 @@ CDefCoefficients = (2.05,2.05)
 # - Report Adapters CSV File defaults
 CDefCSVFileName = "pypso.csv"
 CDefCSVFileStatsGenFreq = 1
+
+# - DB Adapters defaults
+CDefDBName = "simulationPSO.db"
+CDefReportDBSwarmTable = "swarm"
+CDefReportDBTopTable = "topology"
+CDefSQLiteDBPartTable = "particles"
+CDefDBStatsGenFreq = 1
+CDefDBStatsCommitFreq = 500
