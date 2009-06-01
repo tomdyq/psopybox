@@ -53,7 +53,7 @@ pso.setTopology(LocalTopology.LocalTopology(swarm_size,dimensions))
 
 #Report Adapter
 #csv_adapter = ReportAdapters.ReportFileCSV(identify="run1", filename="stats.csv")
-sqlite_adapter = ReportAdapters.ReportDB(identify="ex6")
+sqlite_adapter = ReportAdapters.ReportDB(identify="ex5", resetDB=False, resetIdentify=False)
 pso.setReportAdapter(sqlite_adapter)
 
 # The evaluator function (objective function)
