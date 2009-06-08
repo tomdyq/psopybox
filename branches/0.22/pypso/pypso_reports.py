@@ -167,8 +167,8 @@ if __name__ == "__main__":
     parser = OptionParser()
    
     parser.add_option("-f", "--file", dest="dbfile",
-                     help="Database file to read (default is 'pypso.db'.",
-                     metavar="FILENAME", default="pypso.db")
+                     help="Database file to read.",
+                     metavar="FILENAME")
    
     parser.add_option("-i", "--identify", dest="identify",
                      help="The identify of simulation.", metavar="IDENTIFY")

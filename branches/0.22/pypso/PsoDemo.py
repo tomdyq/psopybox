@@ -48,12 +48,12 @@ timeSteps = 10000
 pso = Pso.PSO()
 pso.setPsoType(Consts.psoType["CONSTRICTED"])
 pso.setTimeSteps(timeSteps)
-#pso.pso.setTopology(GlobalTopology.GlobalTopology(swarm_size,dimensions))
-pso.setTopology(LocalTopology.LocalTopology(swarm_size,dimensions))
+pso.setTopology(GlobalTopology.GlobalTopology(swarm_size,dimensions))
+#pso.setTopology(LocalTopology.LocalTopology(swarm_size,dimensions))
 
 #Report Adapter
 #csv_adapter = ReportAdapters.ReportFileCSV(identify="run1", filename="stats.csv")
-sqlite_adapter = ReportAdapters.ReportDB(identify="ex5", resetDB=False, resetIdentify=False)
+sqlite_adapter = ReportAdapters.ReportDB(dbname='GlobalTopology.db',identify="ex2",resetDB=False ,resetIdentify=False)
 pso.setReportAdapter(sqlite_adapter)
 
 # The evaluator function (objective function)
