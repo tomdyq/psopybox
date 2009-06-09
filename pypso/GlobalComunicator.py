@@ -17,6 +17,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 0.10 2009-04-16 Initial version.
+0.11 2009-06-08 Added Inertia update velocity equation.
 '''
 
 '''
@@ -45,9 +46,8 @@ class GlobalCommunicator(Communicator.Communicator):
                 particle.getVelocity()[i] = particle.getVelocity()[i] + c1 * rand.random() * (particle.getownBestPosition()[i] - particle.getPosition()[i]) + \
                                              c2 * rand.random() * (topology.getBestParticle().getownBestPosition()[i] - particle.getPosition()[i])
             elif Pso.PSO().psoType == Consts.psoType["INERTIA"]:
-                print 'not yet implemented'
-                #particle.getVelocity()[i] = PsoImpl.getInstance().getInertiaFactor() * particle.getVelocity()[i] + c1 * random1.nextDouble() * (particle.getPPosition()[i] - particle.getPosition()[i]) + c2
-                #        * random2.nextDouble() * (topology.getPGParticle().getPPosition()[i] - particle.getPosition()[i]);
+                particle.getVelocity()[i] = Pso.PSO().getInertiaFactor() * particle.getVelocity()[i] + c1 * rand.random() * (particle.getownBestPosition()[i] - particle.getPosition()[i]) + \
+                                             c2* rand.random() * (topology.getBestParticle().getownBestPosition()[i] - particle.getPosition()[i])
             elif Pso.PSO().psoType == Consts.psoType["CONSTRICTED"]:
                 fi = c1 + c2
                 k = 2.0 / abs(2.0 - fi - math.sqrt(math.pow(fi,2) - 4 * fi))
