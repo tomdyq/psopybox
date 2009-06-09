@@ -17,14 +17,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 0.10 2009-05-29 Initial version.
+0.11 2009-06-08 Added support for heat map fitness swarm distribution
 
     This code is part of Pypso.
     Require matplotlib v.0.98.5.0+
     Used to create the graph analysis.
-    
-TODO:
-    
-    
+     
 '''
 
 from optparse import OptionParser

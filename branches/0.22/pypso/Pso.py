@@ -20,6 +20,7 @@ limitations under the License.
 0.20 2009-05-21 Added support for Local Topology implementation (Added StoreBestParticle method).
 0.21 2009-05-24 Added support for Linux interaction.
 0.22 2009-05-25 Added support for report files generation (Uses ReportAdapters).
+0.23 2009-06-08 Fixed some bugs related to the INERTIA factor.
 '''
 
 """     This module contains the PSO Engine, the PSO class is responsible
@@ -37,6 +38,7 @@ from sys import platform as sys_platform
 
 import code
 import pypso
+
 
 
 if sys_platform[:3] == "win":
@@ -195,13 +197,17 @@ class PSO(object):
         #@param  inertiaFactorEnd: The  inertia factor coefficient at the end
         def setInitialInertiaFactor(self,inertiaFactorStart = Consts.CDefInertiaFactorStart, inertiaFactorEnd = Consts.CDefInertiaFactorEnd):
             if self.psoType == Consts.psoType["INERTIA"]:
-                self.inertiaFactorMinus = math.abs((inertiaFactorStart - inertiaFactorEnd)) / self.timeSteps
+                self.inertiaFactorMinus = abs((inertiaFactorStart - inertiaFactorEnd)) / self.timeSteps
                 self.inertiaFactor = inertiaFactorStart
         
         #Updates the inertia factor (Only used by INERTIA Pso Type)
         def updateInertiaFactor(self):
-            self.inertiaFactor = self.inertiaFactor = self.inertiaFactorMinus
-            
+            self.inertiaFactor = self.inertiaFactor - self.inertiaFactorMinus
+        
+        #Get the inertia factor(Only used by INERTIA Pso Type)    
+        def getInertiaFactor(self):
+            return self.inertiaFactor
+        
         #Sets the Report Adapater of the PSO Engine (Warning: The use of the Report Adapter can redue the speed performance of the PSO.)
         #@param repadapter : one of the ReportAdapters classes instance
         def setReportAdapter(self,repadapter):
@@ -315,8 +321,8 @@ class PSO(object):
             
             if self.psoType == Consts.psoType["INERTIA"]:
                 self.updateInertiaFactor()
-                print "Updated the inertia factor"
-        
+                #print "Updated the inertia factor"
+            
             self.currentStep += 1
         
             #print "The swarm update %d was finished."  % (self.currentStep,)
