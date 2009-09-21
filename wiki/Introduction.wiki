@@ -80,3 +80,55 @@ This command will automatic install a suitable version of pyPSO, once you have i
 >>> print pypso.__version__
 '0.1'
 }}}
+
+
+=PSO Features=
+
+== Representations == 
+ 
+ * 1D List
+
+*Note*  It's important to note, that the 1D List can carry any type of python objects or primitives.
+
+
+=Particle Swarm Optimization Algorithms Literature=
+In this section, you will find study material to learn more about PSO Algorithms.
+
+==Books==
+Goldberg, David E (1989), Genetic Algorithms in Search, Optimization and Machine Learning, Kluwer Academic Publishers, Boston, MA.
+
+Goldberg, David E (2002), The Design of Innovation: Lessons from and for Competent Genetic Algorithms, Addison-Wesley, Reading, MA.
+
+Fogel, David B (2006), Evolutionary Computation: Toward a New Philosophy of Machine Intelligence, IEEE Press, Piscataway, NJ. Third Edition
+
+Holland, John H (1975), Adaptation in Natural and Artificial Systems, University of Michigan Press, Ann Arbor
+
+Michalewicz, Zbigniew (1999), Genetic Algorithms + Data Structures = Evolution Programs, Springer-Verlag.
+
+===See also===
+Wikipedia: Genetic Algorithms
+The Wikipedia article about Genetic Algorithms.
+
+
+==Sites==
+
+
+=Glossary / Concepts=
+
+*Fitness score*
+The fitness score represents the current score of  how good is the individual relative to the swarm in that interaction.
+*Evaluation function*
+Also called Fitness Function or Objective Function, the evaluation function is the function which evaluates the particle, giving it a fitness score. The objective of this function is to quantify the solutions (individuals, particles)
+
+===See also===
+Wikipedia: Fitness Function
+An article talking about the Evaluation function, or the “Fitness Function”.
+
+*Particle Base*
+The particle base is the particle which are used as configuration base for all the new replicated particles.
+
+*Interactive mode*
+PyPSO have an interactive mode, you can enter in this mode by pressing ESC key before the end of the evolution. When you press ESC, a python environment will be load. In this environment, you have some analysis functions and you can interact with the swarm of particles at the specific iteration.
+
+*Step callback function*
+This function, when attached to the PSO Engine (PSO.SimplePSO), will be called every iteration. It receives one parameter, the PSO Engine by itself.
