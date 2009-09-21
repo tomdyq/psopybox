@@ -25,3 +25,28 @@ Pyevolve requires the follow modules:
   * Python 2.5+
   * Optional, for graph plotting:  Matplotlib 0.98.4+ 
      The matplotlib  is required to plot the graphs.
+
+
+
+=Downloads=
+
+==Windows==
+
+Installers for Microsoft Windows platform:
+
+  * PyPSO v.0.1 (installer) for Python 2.5
+This is an .exe installer for Microsoft Windows XP/Vista
+
+==Linux==
+
+Installation package for Linux platform:
+
+  * PyPSO  v.0.1 (egg package) for Python 2.5
+This is an egg package file
+
+==Mac==
+
+Installation package for Mac OS platform:
+
+  * PyPSO v.0.1 (.tar package) for Python 2.5
+This is the .tar archive compressed with the build script.
