@@ -59,3 +59,24 @@ This is the .tar archive compressed with the build script.
 This is an package with the PyPSO source code
   * Examples for PyPSO v.0.1 (package)
 This is an package with the PyPSO examples
+
+
+=Installation=
+
+You can download the specific PyPSO from the Downloads section, or using the python setup.py.
+
+The installation can be easy done by using the python setup script:
+
+The installation can be easy done by using the python setup.py :
+
+{{{
+  $ python setup.py install
+}}}
+
+This command will automatic install a suitable version of pyPSO, once you have installed, you can test:
+
+{{{
+>>> import pypso
+>>> print pypso.__version__
+'0.1'
+}}}
