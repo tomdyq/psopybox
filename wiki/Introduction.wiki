@@ -1,0 +1,18 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+_This is the guidelines and instructions of the PyPSO toolbox release 0.1. _
+
+= Details =
+
+PyPSO was developed to be a generic complete particle swarm optimization framework written in pure python, the main goals of PyPSO are:
+
+  * Written in pure python, to maximize the cross-platform issue;
+  * Easy to use API, the API must be easy for end-user
+  * See the evolution, the user can see and interact with the evolution statistics, graphs and etc;
+  * Extensible, the API is extensible, the user can create new representations, swarm operators like communicator, topologies and etc.
+  * Fast, the design must be optimized for peformance
+  * Common features, the framework must implement the common features: topologies like global topology, local topologies. Communicators schemes like Global Communicators, etc.
+ * Default - parameters, we must have default operators, settings, etc. in all options
+ * Open-source, the source is for everyone, not for only one.
