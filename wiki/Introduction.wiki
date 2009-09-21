@@ -1,10 +1,6 @@
-#summary One-sentence summary of this page.
+#summary his is the guidelines and instructions of the PyPSO toolbox release 0.1.
 
 = Introduction =
-
-_This is the guidelines and instructions of the PyPSO toolbox release 0.1. _
-
-= Details =
 
 PyPSO was developed to be a generic complete particle swarm optimization framework written in pure python, the main goals of PyPSO are:
 
