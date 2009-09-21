@@ -12,3 +12,16 @@ PyPSO was developed to be a generic complete particle swarm optimization framewo
   * Common features, the framework must implement the common features: topologies like global topology, local topologies. Communicators schemes like Global Communicators, etc.
  * Default - parameters, we must have default operators, settings, etc. in all options
  * Open-source, the source is for everyone, not for only one.
+
+= Requirements =
+
+PyPSO can be executed on Windows, Linux and Mac platforms.
+
+*Note* On the Mac platform,  the PyPSO 0.1 can't enter on the Interactive Mode.
+
+
+Pyevolve requires the follow modules:
+
+  * Python 2.5+
+  * Optional, for graph plotting:  Matplotlib 0.98.4+ 
+     The matplotlib  is required to plot the graphs.
